@@ -25,10 +25,10 @@ packer {
 # views them; you can change their type later on. Read the variables type
 # constraints documentation
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
-variable "aws_ami_region" {
-  type    = string
-  default = "us-west-2,us-east-2,eu-west-1,ap-southeast-1"
-}
+# variable "aws_ami_region" {
+#   type    = string
+#   default = "us-west-2,us-east-2,eu-west-1,ap-southeast-1"
+# }
 
 variable "build-region" {
   type    = string
@@ -75,8 +75,9 @@ locals {
 # https://www.packer.io/docs/templates/hcl_templates/blocks/source
 # could not parse template for following block: "template: hcl2_upgrade:2: bad character U+0060 '`'"
 
-source "amazon-ebs" "ubuntu" {
-  ami_name      = "learn-packer-linux-aws"
+source "amazon-ebs" "ubuntu-lts" {
+  ami_name      = "learn-packer-linux-aws_{{build-time}}"
+  ami_regions = [ "us-west-2" ]
   instance_type = "t2.micro"
   region        = "us-west-2"
   source_ami_filter {
@@ -88,7 +89,9 @@ source "amazon-ebs" "ubuntu" {
     most_recent = true
     owners      = ["099720109477"]
   }
+
   ssh_username = "ubuntu"
+  ssh_agent_auth = false
 }
 
 # a build block invokes sources and runs provisioning steps on them. The
